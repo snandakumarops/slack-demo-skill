@@ -1,0 +1,265 @@
+Slack demo screen
+
+A design system for rendering Slack as one surface inside a self-contained HTML demo prototype. The baseline values come from the Stellar Media demo build (September 2026), which was matched against real Slack screenshots. The rail and top bar were rebuilt in November 2026 from Slack's own icon paths and checked against the real client (see Rail and top bar). Anything not listed here is not verified: ask for a screenshot of the real screen instead of approximating.
+
+Ask before building
+Workspace name, and the initials for the workspace tile.
+Persona name and role (the person sending the prompt).
+Where the exchange happens: Slackbot DM panel (default), an agent DM, a channel, or a channel thread.
+Channel names and a few lines of realistic channel discussion tied to the use case.
+The prompt, the tool or action line, the response text, and any widget content.
+Hard rules
+Never redraw brand marks. Slack, Slackbot, Salesforce, Auth0 and other logos must come from assets the user supplies (or an official source) and be embedded as base64. If an asset is missing, ask for it. The Slackbot avatar used before was the user's own GIF, embedded so it blinks.
+Spell the workspace name exactly as given, everywhere: search placeholder, sidebar header, channel names.
+No empty or default channels. Name channels for the use case (for example #stellarfest-event-ops, #ticketing-ops) and seed them with believable discussion.
+A Slackbot DM has no tab row. Its header is: avatar, name, then history (clock), boxed compose, kebab, close, with a hairline underneath and messages starting directly below. Channels do keep their Messages / Add canvas tabs.
+The top bar's right side shows the Slackbot avatar (28px, radius 7px) and the help icon in Slackbot demos. In agent or channel demos with no Slackbot, show the help icon only.
+No lower thirds, overlays or prototype control chips (scenario toggles, failure-mode switches) on the Slack screen unless asked.
+Keep the screen true to Slack. Demo content lives only in messages and widgets.
+Rail and top bar glyphs must be Slack's real icon paths (see Rail and top bar). Never substitute generic or hand-drawn icons.
+Unread counts use Slack's mention badge (see Badges). Never lay a dot over the icon, and never draw the badge inside the icon box. The rail Activity badge sits on the icon's top-right corner, pushed outward so it barely covers the glyph.
+Render Slack markdown properly: bold in a message is shown bold, never with literal asterisks.
+Layout
+
+Full-window, column flex:
+
+Top bar, 40px, aubergine: back / forward / history at left 300px, centered search ("Search <Workspace>"), Slackbot avatar and help at right.
+Body, row flex on aubergine:
+Rail, 70px: workspace tile, Home (selected), DMs, Activity, Files, To-dos, Agents & tools, then plus, moon and the user avatar with a green presence dot pinned to the bottom.
+Panes, white, 6px radius, inset 4px from the right and bottom edges:
+Sidebar, 260px: workspace name with chevron, setup pill, "Find a conversation", Threads / Huddles / Recap / Drafts & sent / Directories, separator, Starred, Salesforce group, Channels, Direct messages, footer, "Unread mentions" pill.
+Main channel: 52px header, 40px tabs, messages, composer.
+Slackbot or agent panel on the right: 56% width, min 560px, 52px header, messages, composer. A thread panel uses 50% width, min 600px (see Thread panel).
+Tokens
+Token	Value
+Font	'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif
+Text	
+#1d1c1d
+Secondary text	
+#616061
+Aubergine (top bar, rail)	
+#38123c (measured from the real client)
+Sidebar	
+#3f0e40
+Sidebar text	
+#cfc3cf, bold items #fff
+Sidebar borders	
+#7b5a7c, separator 
+#6b4a6c
+Search field	rgba(255,255,255,.18), text 
+#f4ecf5
+Selected sidebar item	white background, 
+#350d36 text, bold, radius 6px
+Selected rail item	
+#56355c tile; rail icons and labels 
+#baaebd
+Active tab underline	2px 
+#7d4d7f
+Hairlines	
+#e3e3e3, control borders #ddd
+Link / mention	
+#1264a3 on 
+#e8f0fb
+Send button (ready)	
+#007a5a, white icon
+Presence	
+#2bac76
+Unread pill	
+#e8d5ea background, 
+#350d36 text
+Mention badge	
+#cd2553 background, white 11px bold number, 2px ring in the surface colour behind it (
+#38123c on the rail)
+Salesforce blue	
+#00A1E0
+Type and sizing
+Message text 15px, line-height 1.46. Sender name 15px weight 900, timestamp 12px 
+#616061.
+Channel header 17px weight 900. Panel header 19px weight 900. Thread header 17px weight 900.
+Sidebar items 14.5px. Rail labels 11px weight 700.
+Tabs 13.5px. Tool line 13.5px 
+#616061.
+Avatars: 36px with 8px radius in message rows and the panel header, 28px in the top bar, 20px with 5px radius in sidebar DM rows.
+App badge next to a bot name: "APP", 10px bold 
+#616061 on 
+#ececec, radius 3px, padding 1px 4px.
+Composer: 1px #bbb border, radius 10px, 38px formatting bar on 
+#f8f8f8, 15px field, send button 34x28 with radius 5px.
+Date divider: centered pill, 13px bold, 1px #ddd border, radius 20px, hairlines either side.
+Base CSS
+
+Prefix every class with sl- so it cannot collide with other surfaces in the same file (a bare .dd class collided with a settings dropdown once; it became .sdd).
+
+css
+.sl{position:fixed;inset:0;z-index:200;display:none;font-family:'Lato',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1d1c1d;background:#fff}
+.sl.on{display:flex;flex-direction:column}
+/* top bar, body and rail rules: see "Rail and top bar" below (verified) */
+.sl-panes{flex:1;display:flex;min-width:0;background:#fff;border-radius:6px;overflow:hidden;margin:0 4px 4px 0}
+.sl-side{width:260px;background:#3f0e40;color:#e8dfe8;flex-shrink:0;display:flex;flex-direction:column;padding:10px 0 0}
+.sl-side .h{display:flex;align-items:center;padding:0 14px 8px;font-weight:900;font-size:17px;color:#fff;gap:6px}
+.sl-side .setup{margin:2px 12px 10px;height:44px;border:1px solid #7b5a7c;border-radius:9px;display:flex;align-items:center;gap:10px;padding:0 12px;font-size:14px;color:#fff}
+.sl-side .find{margin:0 12px 10px;height:30px;border:1px solid #7b5a7c;border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:13.5px;color:#cfc3cf}
+.sl-side a{display:flex;align-items:center;gap:10px;padding:5px 14px 5px 18px;font-size:14.5px;color:#cfc3cf;white-space:nowrap}
+.sl-side a.on{background:#fff;color:#350d36;font-weight:700;border-radius:6px;margin:0 8px;padding-left:10px}
+.sl-side a.b{color:#fff;font-weight:700}
+.sl-side a .badge{margin-left:auto;background:#cd2553;color:#fff;font-size:11.5px;font-weight:700;border-radius:9px;padding:1px 7px}
+.sl-side .dav{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-size:7.5px;letter-spacing:-.2px;font-weight:900;color:#fff;position:relative;flex-shrink:0}
+.sl-side .dav.pr:after{content:"";position:absolute;right:-3px;bottom:-3px;width:8px;height:8px;border-radius:50%;background:#2bac76;border:2px solid #3f0e40}
+.sl-side .dav.aw:after{content:"";position:absolute;right:-3px;bottom:-3px;width:8px;height:8px;border-radius:50%;background:#3f0e40;border:1.5px solid #cfc3cf}
+.sl-side .sec{padding:12px 14px 4px;font-size:14px;color:#cfc3cf;display:flex;align-items:center;gap:8px}
+.sl-side .sep{height:1px;background:#6b4a6c;margin:10px 0}
+.sl-side .unread{margin:8px 12px 14px;background:#e8d5ea;color:#350d36;border-radius:22px;padding:8px 14px;font-weight:700;font-size:14px;text-align:center}
+.sl-main{flex:1;min-width:0;display:flex;flex-direction:column;background:#fff;border-right:1px solid #ddd}
+.sl-ch{height:52px;border-bottom:1px solid #e3e3e3;display:flex;align-items:center;padding:0 16px;gap:10px;font-weight:900;font-size:17px}
+.sl-tabs{height:40px;border-bottom:1px solid #e3e3e3;display:flex;align-items:center;padding:0 16px;gap:18px;font-size:13.5px;color:#616061}
+.sl-tabs span{display:flex;align-items:center;gap:6px;padding:11px 0}
+.sl-tabs span.on{color:#1d1c1d;font-weight:700;border-bottom:2px solid #7d4d7f}
+.sl-msgs{flex:1;overflow-y:auto;padding:22px 20px 12px;min-height:0}
+.sl-date{display:flex;align-items:center;gap:12px;margin:10px 0 14px}
+.sl-date:before,.sl-date:after{content:"";flex:1;height:1px;background:#e3e3e3}
+.sl-date span{border:1px solid #ddd;border-radius:20px;padding:5px 12px;font-size:13px;font-weight:700}
+.sl-m{display:flex;gap:10px;padding:8px;border-radius:8px;position:relative}
+.sl-m .av{width:36px;height:36px;border-radius:8px;flex-shrink:0;overflow:hidden}
+.sl-m .who{font-weight:900;font-size:15px;display:flex;align-items:baseline;gap:8px}
+.sl-m .who small{font-weight:400;font-size:12px;color:#616061}
+.sl-m .txt{font-size:15px;line-height:1.46;margin-top:2px}
+.sl-m .txt+.txt{margin-top:10px}
+.sl-m .used{font-size:13.5px;color:#616061;display:flex;align-items:center;gap:6px;margin:3px 0 10px}
+.sl-typing{font-size:13px;color:#616061;padding:6px 8px 0 54px;display:flex;gap:6px;align-items:center}
+.sl-typing i{width:6px;height:6px;border-radius:50%;background:#9a9a9a;animation:sl-tdot 1s infinite}
+.sl-typing i:nth-child(2){animation-delay:.2s}.sl-typing i:nth-child(3){animation-delay:.4s}
+@keyframes sl-tdot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+.sl-comp{margin:0 20px 18px;border:1px solid #bbb;border-radius:10px;overflow:hidden}
+.sl-comp .tb{height:38px;background:#f8f8f8;display:flex;align-items:center;gap:16px;padding:0 12px;color:#9a9a9a;font-weight:700;font-size:15px}
+.sl-comp .fld{padding:10px 14px;min-height:44px;font-size:15px;line-height:1.45;outline:none}
+.sl-comp .fld.empty:before{content:attr(data-ph);color:#8d8d8d}
+.sl-comp .bb{display:flex;align-items:center;gap:16px;padding:6px 10px 8px;color:#616061;font-size:15px}
+.sl-send{margin-left:auto;width:34px;height:28px;border-radius:5px;display:grid;place-items:center;color:#aaa;cursor:pointer;transition:background .2s,color .2s}
+.sl-send.ready{background:#007a5a;color:#fff}
+.sl-send+.sdd{width:20px;height:28px;display:grid;place-items:center;color:#aaa;border-left:1px solid #ddd}
+.sl-bot{width:56%;min-width:560px;display:flex;flex-direction:column;background:#fff;flex-shrink:0}
+.sl-bot .hd{height:52px;display:flex;align-items:center;gap:10px;padding:0 20px;font-weight:900;font-size:19px;border-bottom:1px solid #e3e3e3}
+.sl-bot .hd .ic{margin-left:auto;display:flex;gap:22px;color:#1d1c1d;font-weight:400;font-size:18px}
+.sl-bot .sl-msgs{padding:40px 20px 12px}
+.slbot-logo{width:36px;height:36px;border-radius:8px;flex-shrink:0}
+
+Interface icons outside the rail and top bar (not brand marks) are 24-viewBox line icons: no fill, currentColor stroke, stroke-width 1.8, round caps and joins. The rail and top bar are the exception: they use Slack's real filled icon paths (see Rail and top bar). If the user supplies more of Slack's real icon paths, those replace the line icons too.
+
+Rail and top bar (verified against the real Slack client, November 2026)
+
+The user supplied an HTML export of their live Slack desktop client plus a 2x rail screenshot. The glyphs below are Slack's own 20-viewBox icon paths, copied from that export. Their data-qa names are home, direct-messages, notifications, canvas-browser-filled, check-circle, ai-agents, plus, moon, arrow-left, arrow-right, clock, search and help-icon. Ignore any customer branding, workspace logos, avatars or user names in such exports; never copy them into a demo. The user rejected two earlier icon sets as "not right": thin generic line icons, then a hand-drawn Slack-style set. Never substitute generic or hand-drawn icons.
+
+Measured from the 2x screenshot, at 1x:
+
+Rail 70px wide (--tab-rail-width: 70px), top nav 40px, sidebar 260px (--sidebar-width: 260px), 4px client padding with 6px radius on the panes.
+Rail order: Home, DMs, Activity, Files, To-dos, Agents & tools. Each item takes 68px of height: a 36x36 icon tile with an 8px radius, then the label.
+Icons are 20px with fill="currentColor" and evenodd paths. They are not stroked.
+Rail background 
+#38123c. Icons and labels 
+#baaebd, including on the selected tab. The selected tile is 
+#56355c, and the selected tab uses the filled glyph.
+Labels are 11px, weight 700, line-height 13px. "Agents & tools" breaks as "Agents<br>& tools".
+An unread item with no mentions gets a dimmed dot (
+#7a607d, about 9px) at the icon's top-right; this is b.dot.
+Filled Home is derived from the outline: its outer contour is filled and the window is cut out with evenodd. Slack's own home-filled path was not in the export. The selected Files glyph in the export, canvas-browser-filled, is real; the Files glyph below is the outline variant from the sidebar list. A filled bell (Activity selected) and filled bubbles (DMs selected) were not in the export, so ask for them before showing those tabs selected.
+
+Rail CSS (replaces the older rail rules in Base CSS):
+
+css
+.sl-top{height:40px;background:#38123c;display:flex;align-items:center;flex-shrink:0;position:relative;color:#e8dde9}
+.sl-top .nav{position:absolute;left:300px;display:flex;gap:16px;align-items:center}
+.sl-search{margin:0 auto;width:min(720px,48vw);height:26px;background:rgba(255,255,255,.18);border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 10px;color:#f4ecf5;font-size:13px}
+.sl-top .r{position:absolute;right:20px;display:flex;gap:20px;align-items:center}
+svg.sk{width:20px;height:20px;display:block;flex-shrink:0}
+.sl-body{flex:1;display:flex;min-height:0;background:#38123c}
+.sl-rail{width:70px;display:flex;flex-direction:column;align-items:center;padding:6px 0 12px;flex-shrink:0;color:#baaebd}
+.sl-rail .ws{width:36px;height:36px;border-radius:8px;background:#fff;color:#38123c;display:grid;place-items:center;font-weight:900;font-size:17px;margin:2px 0 14px}
+.sl-rail .it{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:700;line-height:13px;width:66px;height:68px;text-align:center;color:#baaebd}
+.sl-rail .it i{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;position:relative;flex-shrink:0}
+.sl-rail .it.on i{background:#56355c}
+.sl-rail .it i b{position:absolute;top:-6px;right:-8px;min-width:20px;height:20px;box-sizing:border-box;padding:0 5px;border-radius:10px;background:#cd2553;color:#fff;font-size:11px;font-weight:700;line-height:16px;text-align:center;border:2px solid #38123c;font-style:normal}
+.sl-rail .it i b.dot{top:-1px;right:-1px;min-width:0;width:9px;height:9px;padding:0;background:#7a607d;border:none}
+.sl-rail .plus,.sl-rail .moon{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.13);display:grid;place-items:center;color:#f4ecf5}
+.sl-rail .plus{margin-top:auto}.sl-rail .moon{margin-top:10px}
+.sl-rail .me{margin:12px 0 0;width:36px;height:36px;border-radius:8px;position:relative;background:#4a6fa5;color:#fff;font-weight:900;font-size:14px;display:grid;place-items:center}
+.sl-rail .me:after{content:"";position:absolute;right:-3px;bottom:-3px;width:10px;height:10px;border-radius:50%;background:#2bac76;border:2px solid #38123c}
+
+Rail and top bar markup, ready to paste (from the ECORP demo; change the workspace name, the tile letter and the user initials):
+
+html
+<div class="sl-top">
+  <div class="nav"><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M9.793 4.232a.75.75 0 0 0-1.06-.025l-5.5 5.25a.75.75 0 0 0 0 1.086l5.5 5.25a.75.75 0 0 0 1.035-1.086L5.622 10.75H16.25a.75.75 0 0 0 0-1.5H5.622l4.146-3.957a.75.75 0 0 0 .025-1.06"/></svg><span style="opacity:.45;display:flex"><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M11.268 15.793a.75.75 0 0 1-1.036-1.086l4.146-3.957H3.75a.75.75 0 0 1 0-1.5h10.628l-4.146-3.957a.75.75 0 0 1 1.036-1.086l5.5 5.25a.75.75 0 0 1 .052 1.03l-.052.055z"/></svg></span><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M10 2.5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15M10 19a9 9 0 1 0 0-18 9 9 0 0 0 0 18m0-14a.75.75 0 0 0-.75.75v4.75c0 .414.336.75.75.75h3.75a.75.75 0 0 0 0-1.5h-3v-4A.75.75 0 0 0 10 5"/></svg></div>
+  <div class="sl-search"><svg class="sk" style="width:16px;height:16px" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M15 9A6 6 0 1 0 3 9a6 6 0 0 0 12 0m1.5 0c0 1.8-.636 3.452-1.694 4.745l3.474 3.475a.75.75 0 1 1-1.06 1.06l-3.475-3.474A7.5 7.5 0 1 1 16.5 9"/></svg>Search ECORP</div>
+  <div class="r"><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M17.5 10a7.5 7.5 0 1 0-15 0 7.5 7.5 0 0 0 15 0m1.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0M7 8.25c0-.836.333-1.547.91-2.04.563-.48 1.31-.71 2.09-.71.776 0 1.576.227 2.2.729.641.517 1.05 1.294 1.05 2.271 0 .827-.264 1.515-.807 2.001-.472.423-1.08.62-1.693.701V12h-1.5v-1c0-.709.566-1.21 1.179-1.269l.182-.022c.404-.06.669-.18.831-.325s.308-.39.308-.884c0-.523-.203-.87-.491-1.104C10.95 7.148 10.5 7 10 7c-.497 0-.876.145-1.117.352-.23.195-.383.484-.383.898a.75.75 0 0 1-1.5 0M10 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/></svg></div>
+ </div>
+<div class="sl-rail">
+   <div class="ws">E</div>
+   <div class="it on"><i><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M9.019 1.759a1.75 1.75 0 0 1 1.963 0l7.189 4.87a.75.75 0 0 1-.842 1.242L17 7.648v7.102a3.75 3.75 0 0 1-3.75 3.75h-6.5A3.75 3.75 0 0 1 3 14.75V7.648l-.33.223a.75.75 0 0 1-.84-1.242zM12 10a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1z"/></svg></i>Home</div>
+   <div class="it"><i><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12.25 3a4.75 4.75 0 0 1 4.35 6.662l-.118.247a.75.75 0 0 0-.067.489l.378 1.896-1.895-.379a.75.75 0 0 0-.372.02l-.117.047a5 5 0 0 1-.648.273.75.75 0 1 0 .478 1.422 6 6 0 0 0 .61-.242l2.754.55a.75.75 0 0 0 .883-.883l-.553-2.755A6.25 6.25 0 1 0 6.23 6.064a.75.75 0 0 0 1.445.404A4.75 4.75 0 0 1 12.25 3M6.5 10a3.5 3.5 0 1 1-1.59 6.618.75.75 0 0 0-.364-.08l-.125.013-1.215.242.243-1.214a.75.75 0 0 0-.067-.488A3.5 3.5 0 0 1 6.5 10m0 8.5a5 5 0 1 0-4.57-2.97l-.415 2.073a.75.75 0 0 0 .882.882l2.073-.415c.62.277 1.308.43 2.03.43"/></svg></i>DMs</div>
+   <div class="it"><i><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M10 1.5c.688 0 1.31.246 1.767.762.33.374.538.85.65 1.384 1.21.368 2.104 1.136 2.687 2.356.604 1.266.854 2.988.89 5.182l1.868 1.878.013.011.01.013c.637.7.807 1.59.374 2.342-.407.704-1.224 1.072-2.105 1.072h-3.383c-.128.39-.336.775-.638 1.105-.493.537-1.208.895-2.12.895-.917 0-1.638-.356-2.136-.893a3 3 0 0 1-.646-1.107H3.843c-.88 0-1.697-.368-2.104-1.072-.433-.752-.263-1.643.372-2.342l.012-.013.013-.013.531.53.005.005-.536-.535 1.87-1.876c.036-2.194.288-3.916.891-5.182.582-1.22 1.476-1.988 2.685-2.356.112-.534.32-1.010.651-1.384C8.69 1.746 9.312 1.5 10 1.5M10 3c-.311 0-.505.1-.644.256-.156.177-.308.504-.359 1.062l-.05.558-.55.11c-1.023.204-1.69.71-2.145 1.661-.485 1.017-.736 2.567-.752 4.858l-.002.307-.217.217-2.068 2.075c-.147.164-.195.295-.208.377a.3.3 0 0 0 .034.198c.07.12.304.32.804.321h4.665l.07.672c.033.327.17.668.4.916.214.231.536.412 1.036.412.486 0 .802-.178 1.013-.41.227-.247.362-.588.396-.916l.07-.674h4.661c.5 0 .736-.202.805-.321a.3.3 0 0 0 .034-.199c-.013-.082-.063-.215-.214-.381l-2.06-2.07-.217-.217-.002-.307c-.015-2.29-.266-3.841-.751-4.858-.454-.952-1.122-1.457-2.147-1.662l-.548-.109-.051-.558c-.051-.558-.203-.885-.36-1.062C10.506 3.099 10.312 3 10 3"/></svg><b>1</b></i>Activity</div>
+   <div class="it"><i><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12.164 1.5a3.337 3.337 0 0 1 3.32 3.015 3.337 3.337 0 0 1 3.016 3.32v3.97a2.75 2.75 0 0 1-.806 1.944l-3.945 3.945a2.75 2.75 0 0 1-1.944.806h-3.970a3.337 3.337 0 0 1-3.32-3.015 3.337 3.337 0 0 1-3.015-3.32v-7.33A3.336 3.336 0 0 1 4.836 1.5zm0 1.5c.9 0 1.647.647 1.805 1.5H7.836A3.336 3.336 0 0 0 4.5 7.836v6.133A1.84 1.84 0 0 1 3 12.164V4.836C3 3.822 3.822 3 4.836 3zM17 11.5V7.836A1.836 1.836 0 0 0 15.164 6H7.836A1.836 1.836 0 0 0 6 7.836v7.328C6 16.178 6.822 17 7.836 17H11.5v-4a1.5 1.5 0 0 1 1.5-1.5zm-.678 1.5H13v3.322z"/></svg></i>Files</div>
+   <div class="it"><i><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M10 2.5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15M10 19a9 9 0 1 0 0-18 9 9 0 0 0 0 18m3.636-12.372a.75.75 0 0 0-1.058.087l-4.125 4.862-1.14-1.61a.75.75 0 0 0-1.225.867l1.7 2.4a.75.75 0 0 0 1.184.051l4.75-5.6a.75.75 0 0 0-.086-1.057"/></svg></i>To-dos</div>
+   <div class="it"><i><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M14.548 1.686a.332.332 0 0 0-.596 0l-.86 1.714-.103.189c-.258.43-.639.774-1.088 1l-1.716.861-.08.054a.333.333 0 0 0 .08.54l1.716.861.19.103c.43.258.774.638 1 1.087l.861 1.715a.332.332 0 0 0 .596 0l.86-1.715c.254-.518.678-.93 1.19-1.19l1.317-.66.25-.498v.001l-.248.495.397-.198a.33.33 0 0 0 .081-.54l-.08-.055-1.716-.86a2.65 2.65 0 0 1-1.19-1.19zm-1.649 4.06a4.14 4.14 0 0 0 1.352-1.35A4.140 4.140 0 0 0 15.6 5.748a4.15 4.15 0 0 0-1.352 1.35 4.14 4.14 0 0 0-1.349-1.352M4.875 4a1.875 1.875 0 1 1 0 3.75 1.875 1.875 0 0 1 0-3.75m0 5.25a3.375 3.375 0 1 0 0-6.75 3.375 3.375 0 0 0 0 6.75m1.875 5.875a1.875 1.875 0 1 0-3.75 0 1.875 1.875 0 0 0 3.75 0m1.5 0a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0m6.125-1.875a1.875 1.875 0 1 1 0 3.75 1.875 1.875 0 0 1 0-3.75m0 5.25a3.375 3.375 0 1 0 0-6.75 3.375 3.375 0 0 0 0 6.75"/></svg></i>Agents<br>&amp; tools</div>
+   <div class="plus"><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M9.25 10.75v6a.75.75 0 0 0 1.5 0v-6h6a.75.75 0 0 0 0-1.5h-6v-6a.75.75 0 0 0-1.5 0v6h-6a.75.75 0 0 0 0 1.5z"/></svg></div>
+   <div class="moon"><svg class="sk" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M2 9.994a7.97 7.97 0 0 1 7.302-7.97l.4-.023a.65.65 0 0 1 .64.405c.113.26.04.563-.158.75a5.58 5.58 0 0 0-1.845 4.17 5.68 5.68 0 0 0 5.672 5.671q1.234 0 2.378-.532a.669.669 0 0 1 .885.886A8.03 8.03 0 0 1 10.005 18C5.598 18 2 14.404 2 9.994m4.839-2.668c0-1.22.305-2.387.872-3.420A6.470 6.470 0 0 0 3.5 9.993c0 3.582 2.926 6.506 6.506 6.506 1.81 0 3.517-.763 4.727-2.041a7.18 7.18 0 0 1-7.895-7.133"/></svg></div>
+   <div class="me">HF</div>
+  </div>
+Badges
+
+Corrected after user review (November 2026). The first ECORP build drew the rail badge inside the 36x32 icon box (top 1px, right 2px, 10px text), so it sat on top of the bell. The user rejected it as not Slack's design system.
+
+Rail (Activity, DMs): red pill with a number, 20px tall, 11px bold white, 2px 
+#38123c ring. Anchor it to the icon box at top -6px, right -8px so it hangs off the top-right corner and the glyph stays readable. Put the badge element inside the icon box (<i>…<b>1</b></i>), not on the label.
+Rail with unreads but no mentions: use b.dot, the dimmed 
+#7a607d dot (see Rail and top bar).
+Sidebar rows (unread mentions on a channel or DM): .badge pill aligned right, same red, and the row text goes bold white (a.b).
+Unread without mentions: bold white row text only, no badge.
+Check badges at device scale factor 3 against a real Slack screenshot before delivering. The red (
+#cd2553) was picked to match Slack's mention badge but has not been checked against a screenshot; a screenshot from the user overrides it.
+Initials avatars
+
+When no photo is supplied, use a coloured tile with white initials. In the 20px sidebar DM tile, initials need 7.5px text with -0.2px letter spacing, or two-letter initials like "MJ" get clipped. Message-row tiles (36px) take 14px weight 900. For a bot or app whose logo is a dark mark (for example the Auth0 shield), put the logo on a white tile with a 1px #ddd border.
+
+Thread panel
+
+Built in the ECORP / Auth0 demo (November 2026), not yet checked against a real Slack screenshot. Panel 50% width, min 600px. Header 52px: "Thread" in 17px weight 900, then "# channel-name" in 13px 
+#616061, with kebab and close on the right. The parent message comes first, then an "N replies" label in 13px 
+#616061 with a hairline running to the right. The composer shows "Reply…" with an "Also send to #channel" checkbox below it. In the channel, the parent message shows "N replies" in 
+#1264a3 bold, the replier avatars at 24px, and "Last reply today at <time>" in grey. Update the counts on both sides each time a reply posts.
+
+Agent response pattern
+
+Each beat is two steps: prompt, then response.
+
+Clicking the composer pastes the full prompt instantly (no typing animation) and turns the send button green.
+Pressing send posts the user's message (avatar, name, "Today at <time>").
+A typing line shows "<Bot> is running <action name>" with three dots for about 1.6 seconds.
+The bot message appears, in this order:
+Tool line in grey: "Used <action> from <server> (<vendor>) MCP ›"
+A short narrative paragraph that leads with the one thing needing attention
+The widget
+A closing question offering the next action
+Reaction icons at the bottom right
+
+Button-driven agents (alert card, then "Investigate", then "View Recommendations", then "Apply") follow the user's prototype instead: the button triggers the reply directly, with no composer step. Progress steps are bordered rows (1px #ddd, radius 8px) with a spinner that turns into a black check circle, about 0.9 seconds each, and each row has a chevron that expands a one-line detail.
+
+Widget card inside a message
+Card: 1px 
+#cfcfcf border, radius 14px, padding 18px 20px, max-width 820px, 10px top margin.
+Header: icon, title, sub-line naming the source and time, a status pill on the right.
+Progress bar with labels beneath (count on the left, percentage on the right).
+Tile grid: 3 columns, 8px gap, max-width 560px. Tiles have a 1px 
+#cfcfcf border, radius 12px, padding 14px 8px 12px, with an icon, a name and a Clear / Blocked state.
+Alert row for the blocked item, with a note line.
+Actions: one black primary button and one secondary button.
+Widget content follows the real payload envelope used for the demo; do not invent schema shapes.
+Verify before delivering
+Render with Playwright at 1600x1000 and device scale factor 2. Then screenshot individual elements up close: rail icons and badges at scale factor 4; top bar, sidebar DM tiles, panel header and a message row at scale factor 3.
+Put a rendered crop next to the user's reference screenshot at the same scale (a 2x reference against a 2x render) and compare them by eye. Sample the reference's pixel colours instead of guessing hex values.
+Parse the inline script with Node to catch syntax errors before publishing.
+Compare against the user's reference screenshot. Where they differ, the screenshot wins.
+Flag data inconsistencies in the user's prototype (for example a "last checked" time earlier than the start time) instead of silently copying or fixing them.
+Deliver one self-contained HTML file with assets embedded.
+Not covered
+
+Dark theme, mobile Slack, huddles and canvases were not built in the source demo. Threads were built once (see Thread panel) but not verified. Ask for a reference screenshot before attempting any of them.
